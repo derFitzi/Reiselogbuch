@@ -7,17 +7,17 @@ const routes = [
     { 
         path: '/', 
         component: Home,
-        props: true  // Aktiviere die Weitergabe von Props
+        props: true  // Weitergeben von properties
     },
     { 
         path: '/entries', 
         component: TravelEntries,
-        props: true  // Aktiviere die Weitergabe von Props
+        props: true 
     },
     { 
         path: '/statistics', 
         component: Statistics,
-        props: true  // Aktiviere die Weitergabe von Props
+        props: true
     }
 ];
 

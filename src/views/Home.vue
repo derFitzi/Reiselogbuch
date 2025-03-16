@@ -1,10 +1,10 @@
 <template>
-  <div class="home-container">
-    <div class="hero-section">
+  <div class="home-container"> <!-- Nur für Style-->
+    <div class="hero-section"> <!-- Nur für Style-->
       <h1>Lukas Reiselogbuch</h1>
       <p>Zum Dokumentieren der tollsten Reiseerlebnisse</p>
       
-      <div class="action-buttons">
+      <div class="action-button"> <!-- Nur für Style-->
         <router-link to="/entries">
           <button class="primary-btn">Zu den Reiseeinträgen</button>
         </router-link>
@@ -14,8 +14,7 @@
   </div>
 </template>
 
-
-<style scoped>
+<style scoped> 
 .home-container {
   max-width: 1000px;
   margin: 0 auto;
@@ -42,7 +41,7 @@
   margin-bottom: 2rem;
 }
 
-.action-buttons {
+.action-button {
   display: flex;
   justify-content: center;
   gap: 1rem;

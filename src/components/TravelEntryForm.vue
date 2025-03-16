@@ -1,10 +1,10 @@
 <template>
-  <div class="form-container">
+  <div class="form-container"> <!--  für Style-->
     <h2 class="form-title">Neue Reise</h2>
-    <form @submit.prevent="submitEntry" class="entry-form">
-      <div class="form-row">
+    <form @submit.prevent="submitEntry" class="entry-form"> <!--  prevent , dass nicht Standard Formularübermittlung vom Browser-->
+      <div class="form-row"> <!--  für Style-->
         <div class="form-group half">  <!--  half dass sie nebeneinander sind-->
-          <label for="place">Reiseziel</label>
+          <label >Reiseziel</label>
           <input 
             id="place" 
             v-model="newEntry.place" 
@@ -15,7 +15,7 @@
         </div>
 
         <div class="form-group half">
-          <label for="date">Datum</label>
+          <label >Datum</label>
           <input 
             id="date" 
             type="date" 
@@ -26,7 +26,7 @@
       </div>
 
       <div class="form-group">
-        <label for="notes">Notizen</label>
+        <label >Notizen</label>
         <textarea 
           id="notes" 
           v-model="newEntry.notes" 
@@ -40,38 +40,37 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import axios from 'axios';
+import { ref, computed } from 'vue'; //reaktive Referenzen, berechnete Eigenschaften
+import axios from 'axios'; // Bilder
 
-const emit = defineEmits(['add-entry']);
-const newEntry = ref({ 
+const emit = defineEmits(['add-entry']); //Event das an Elternkomponente gesendet werden kann
+const newEntry = ref({ //reaktives Objekt
   place: '', 
   date: new Date().toISOString().substr(0, 10),
   notes: '',
-  imageUrl: 'https://images.pexels.com/photos/161853/vienna-austria-architecture-city-161853.jpeg' // Fallback-Bild
+  imageUrl: 'https://image.jimcdn.com/app/cms/image/transf/dimension=451x10000:format=jpg/path/sad488f1be251f93a/image/i66aadc76bfcf7e62/version/1735401997/image.jpg' // Bild wenn keins vorhanden
 });
 
-// Validierung nur für Ort und Datum
+// Validierung Ort und Datum (ob sie leer sind)
 const isFormValid = computed(() => {
   return newEntry.value.place && newEntry.value.date;
 });
 
-const searchTimeout = ref(null);
+const searchTimeout = ref(null); // Timeout für die Suche
 
-// Bilder suchen, wenn der Nutzer einen Ort eingibt
+// Bilder suchen
 const searchImages = () => {
-  if (searchTimeout.value) clearTimeout(searchTimeout.value);
+  if (searchTimeout.value) clearTimeout(searchTimeout.value); // Damit nicht mehrere anfragen
   
-  if (!newEntry.value.place || newEntry.value.place.length < 3) return;
+  if (!newEntry.value.place || newEntry.value.place.length < 3) return; // Min 3 Zeichen zum sucheb
   
   searchTimeout.value = setTimeout(async () => {
     try {
-      // API-Key für Unsplash
       const apiKey = '3aEla7O5NVAk_nlnwfTRqlSXuPvRD084hC9r8yYlWT4';
       
       const response = await axios.get('https://api.unsplash.com/search/photos', {
         params: {
-          query: newEntry.value.place,
+          query: newEntry.value.place,  // Ort als Suchbegriff
           per_page: 1 // Nur ein Bild abrufen
         },
         headers: {
@@ -79,27 +78,27 @@ const searchImages = () => {
         }
       });
       
-      // Wenn ein Bild gefunden wurde, setzen wir es als imageUrl
-      if (response.data.results.length > 0) {
-        newEntry.value.imageUrl = response.data.results[0].urls.regular;
+      // Bild gefunden
+      if (response.data.results.length > 0) { // Bildeintrag min 1
+        newEntry.value.imageUrl = response.data.results[0].urls.regular; // nimmt das erste
       }
     } catch (err) {
       console.error('Fehler beim Abrufen des Bildes:', err);
-      // Bei einem Fehler behalten wir das Fallback-Bild
+      // Fehler, 404 Bus wird angezeigt
     }
-  }, 500); // 500ms Debounce
+  }, 500); 
 };
 
 // Absenden-Funktion
 const submitEntry = () => {
   if (isFormValid.value) {
-    emit('add-entry', { ...newEntry.value });
+    emit('add-entry', { ...newEntry.value }); // an übergeordenete Komponente (TravelEntries.vue) senden
     // Formular zurücksetzen
     newEntry.value = { 
       place: '', 
       date: new Date().toISOString().substr(0, 10),
       notes: '',
-      imageUrl: 'https://images.pexels.com/photos/161853/vienna-austria-architecture-city-161853.jpeg' // Fallback-Bild
+      imageUrl: 'https://image.jimcdn.com/app/cms/image/transf/dimension=451x10000:format=jpg/path/sad488f1be251f93a/image/i66aadc76bfcf7e62/version/1735401997/image.jpg'
     };
   }
 };
@@ -107,9 +106,8 @@ const submitEntry = () => {
 
 <style scoped>
 .form-container {
-  max-width: 650px;
+  max-width: 1000px;
   margin: 2rem auto;
-  background-color: #f0f8ff;
   border: 2px solid #3980c0;
   border-radius: 8px;
   padding: 1.5rem;

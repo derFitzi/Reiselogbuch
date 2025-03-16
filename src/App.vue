@@ -13,7 +13,7 @@
       </nav>
     </header>
     
-    <main>
+    <main> <!-- Hier wird der Router-View eingebunden (Für Home.vue) -->
       <router-view v-bind:entries="entries" @add-entry="addEntry" @remove-entry="removeEntry" />
     </main>
   </div>
@@ -25,10 +25,8 @@ import { ref, computed, watch, onMounted } from 'vue';
 // Daten definieren (für v-model Bindung)
 const entries = ref([]);
 
-// Computed Property für das aktuelle Jahr
-const currentYear = computed(() => new Date().getFullYear());
 
-// Einträge aus localStorage laden
+// Einträge laden
 const loadEntries = () => {
   const savedEntries = localStorage.getItem('travelEntries');
   if (savedEntries) {
@@ -36,12 +34,12 @@ const loadEntries = () => {
   }
 };
 
-// Einträge im localStorage speichern
+// Einträge speichern
 const saveEntries = () => {
   localStorage.setItem('travelEntries', JSON.stringify(entries.value));
 };
 
-// Neuen Eintrag hinzufügen
+// Neuen Eintrag
 const addEntry = (newEntry) => {
   entries.value.push(newEntry);
 };
@@ -51,15 +49,17 @@ const removeEntry = (index) => {
   entries.value.splice(index, 1);
 };
 
-// Einträge aus localStorage laden, wenn die Komponente geladen wird
+// Einträge laden, wenn Komponente geladen wird
 onMounted(() => {
   loadEntries();
 });
 
-// Änderungen an entries im localStorage speichern
+// Änderungen speichern, wenn sich die Einträge ändern
 watch(entries, () => {
   saveEntries();
 }, { deep: true });
+
+const currentYear = computed(() => new Date().getFullYear());
 </script>
 
 <style>

@@ -6,21 +6,21 @@
     
     <ul v-else class="entry-list">
       <li v-for="(entry, index) in entries" :key="index" class="entry-item">
-        <div class="entry-content">
-          <div class="entry-details">
-            <div class="entry-date">Besucht am: {{ formatDate(entry.date) }}</div>
+        <div class="entry-content"> <!-- für Style -->
+          <div class="entry-details"><!-- für Style -->
+            <div class="entry-date">Besucht am: {{ formatDate(entry.date) }}</div> <!-- unten definiert -->
             <h3>{{ entry.place }}</h3>
             <div v-if="entry.notes" class="entry-notes">{{ entry.notes }}</div>
           </div>
           
-          <div class="entry-image">
+          <div class="entry-image"> <!-- für Style -->
             <img v-if="entry.imageUrl" :src="entry.imageUrl" :alt="entry.place" />
             <div v-else class="no-image">Kein Bild</div>
           </div>
         </div>
         
-        <div class="entry-actions">
-          <button @click="$emit('remove-entry', index)" class="delete-btn">Löschen</button>
+        <div class="entry-actions"><!-- für Style -->
+          <button @click="$emit('remove-entry', index)" class="delete-btn">Löschen</button> <!-- blei klick an Elternkomponent gesendet -->
         </div>
       </li>
     </ul>
@@ -34,7 +34,7 @@ defineProps({
   entries: Array
 });
 
-defineEmits(['remove-entry']);
+defineEmits(['remove-entry']); // kann das event an Elternkomponente schicken
 
 // Datum formatieren
 const formatDate = (dateString) => {

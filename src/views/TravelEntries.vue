@@ -1,9 +1,8 @@
 <template>
   <div class="entries-page">
-    <!-- Formular ist immer sichtbar -->
     <TravelEntryForm @add-entry="addEntry" />
     
-    <!-- Einträgeliste unter dem Formular -->
+
     <TravelEntryList 
       :entries="entries" 
       @remove-entry="removeEntry" 
@@ -12,8 +11,8 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
-import TravelEntryForm from '../components/TravelEntryForm.vue';
+import { defineProps, defineEmits } from 'vue'; // Props und Events
+import TravelEntryForm from '../components/TravelEntryForm.vue'; // Child Komponenten
 import TravelEntryList from '../components/TravelEntryList.vue';
 
 const props = defineProps({
@@ -32,9 +31,8 @@ const addEntry = (newEntry) => {
 
 // Eintrag entfernen
 const removeEntry = (index) => {
-  if (confirm('Möchtest du diesen Eintrag wirklich löschen?')) {
     emit('remove-entry', index);
-  }
+  
 };
 </script>
 

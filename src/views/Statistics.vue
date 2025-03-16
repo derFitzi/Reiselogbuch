@@ -3,25 +3,22 @@
     <h1>Reisestatistik</h1>
 
     <div v-if="totalEntries === 0" class="no-data">
-      Noch keine Reisedaten vorhanden. Füge Reiseeinträge hinzu, um Statistiken zu sehen.
+      Keine Reisen vorhanden
     </div>
     
     <div v-else>
       <div class="statistics-list">
-        <!-- Anzahl der Reisen -->
         <div class="stat-card">
           <h3>Anzahl der Reisen</h3>
           <div class="stat-value">{{ totalEntries }}</div>
         </div>
         
-        <!-- Letzte Reise -->
         <div class="stat-card" v-if="mostRecentPlace">
           <h3>Letzte Reise</h3>
           <div class="stat-value">{{ mostRecentPlace }}</div>
           <div class="stat-label">{{ formatDate(mostRecentDate) }}</div>
         </div>
         
-        <!-- Häufigste Reise -->
         <div class="stat-card" v-if="topDestination">
           <h3>Häufigste Reise</h3>
           <div class="stat-value">{{ topDestination.place }}</div>
@@ -29,7 +26,7 @@
         </div>
       </div>
   </div>
-      <!-- Karte mit besuchten Orten -->
+
       <div class="map-container">
         <h2>Meine Reiseziele auf der Karte</h2>
         <div id="map" ref="mapRef"></div>
@@ -49,10 +46,10 @@ const mapRef = ref(null);
 let map = null;
 let markers = [];
 
-// Gesamtzahl der Einträge
+// Gesamtzahl der Reisen
 const totalEntries = computed(() => props.entries?.length || 0);
 
-// Letzter besuchter Ort
+// Letzter  Ort
 const mostRecentEntry = computed(() => {
   if (!props.entries || props.entries.length === 0) return null;
   
@@ -64,7 +61,7 @@ const mostRecentEntry = computed(() => {
 const mostRecentPlace = computed(() => mostRecentEntry.value?.place || null);
 const mostRecentDate = computed(() => mostRecentEntry.value?.date || null);
 
-// Häufigste Reise (Top Destination)
+// Häufigste Reise
 const topDestination = computed(() => {
   if (!props.entries || props.entries.length === 0) return null;
   
@@ -86,20 +83,20 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('de-DE', options);
 };
 
-// Sammelt einzigartige Orte für die Karte
+// einzigartige Orte für die Karte (für häufigste Reiseziel)
 const uniqueLocations = computed(() => {
-  if (!props.entries || props.entries.length === 0) return [];
+  if (!props.entries || props.entries.length === 0) return []; // keine Einträge
   
   const locations = {};
   
   props.entries.forEach(entry => {
-    if (!locations[entry.place]) {
+    if (!locations[entry.place]) {  // neuer Ort
       locations[entry.place] = {
         place: entry.place,
         count: 1,
         lastVisit: entry.date
       };
-    } else {
+    } else { // Ort gibt es schon (update)
       locations[entry.place].count++;
       if (new Date(entry.date) > new Date(locations[entry.place].lastVisit)) {
         locations[entry.place].lastVisit = entry.date;
@@ -110,7 +107,8 @@ const uniqueLocations = computed(() => {
   return Object.values(locations);
 });
 
-// Geocoding-Funktion, um Ortsnamen in Koordinaten umzuwandeln
+// Von Namen zu Koordinaten
+// Mit Api Namen holen
 const geocodeLocation = async (placeName) => {
   try {
     const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(placeName)}`);
@@ -134,7 +132,7 @@ const geocodeLocation = async (placeName) => {
 const initMap = async () => {
   if (!mapRef.value || !props.entries || props.entries.length === 0) return;
   
-  // Warte kurz, bis die DOM-Elemente gerendert sind
+  // Kurz warten (sonst Fehler)
   setTimeout(async () => {
     // Icon für die Marker definieren
     const customIcon = L.icon({
@@ -157,15 +155,10 @@ const initMap = async () => {
       const geoData = await geocodeLocation(location.place);
       
       if (geoData) {
-        const marker = L.marker([geoData.lat, geoData.lng], { icon: customIcon })
-          .addTo(map)
-          .bindPopup(`
-            <b>${location.place}</b><br>
-            ${location.count} mal besucht<br>
-            Letzter Besuch: ${formatDate(location.lastVisit)}
-          `);
+        const marker = L.marker([geoData.lat, geoData.lng], { icon: customIcon }) // neuer Marker
+          .addTo(map) // zur Karte hinzufügen
         
-        markers.push(marker);
+        markers.push(marker); // in Arrayhinzufühen
       }
     }
     
@@ -177,7 +170,7 @@ const initMap = async () => {
   }, 100);
 };
 
-// Nach dem Mounten der Komponente die Karte initialisieren
+// Nach dem Mounten der Komponente die Karte initialisieren (sonst Fehler)
 onMounted(() => {
   initMap();
 });
